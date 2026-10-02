@@ -1,0 +1,16 @@
+## Chapter 3: Advanced BCM Operations: Firmware, Networking, and Troubleshooting — Flashcards
+
+| # | Front (Question) | Back (Answer) |
+|---|-----------------|---------------|
+| 1 | BCM command to update GPU firmware cluster-wide with rollback capability? | cmsh device update firmware -c <category> --backup The --backup flag creates a rollback point before firmware update. Exam tip: Category-based updates are the tested method; never manual per-node updates. |
+| 2 | What does 'Physical state: Polling' in ibstat output indicate? | InfiniBand port attempting link establishment but cannot complete subnet manager handshake. Most common cause: missing or misconfigured opensm (subnet manager). Exam tip: Polling = SM config issue, not cable failure. |
+| 3 | How does BCM install DOCA Services on BlueField DPU Arm cores? | Create DPU software image in BCM repository → assign to node category → 'cmsh device provision' targets DPU. Exam tip: DPUs are provisionable devices in BCM with dedicated OS images, not containers. |
+| 4 | BCM command to generate GPU utilization and power consumption report? | cmsh report generate --type usage --metrics gpu_util,power,jobs --period <monthly/weekly/daily> Exam tip: 'report generate' aggregates historical data; nvidia-smi is real-time only. |
+| 5 | Default BCM image repository connection timeout? | 30 seconds. Set in bcm.conf. Exam tip: If nodes timeout but head node connects, check node network config (DHCP/PXE logs) before increasing timeout. |
+| 6 | What does 'bcm-agent: CRITICAL - last heartbeat 180 seconds ago' mean? | bcm-agent daemon on node not sending heartbeats to bcm-server. Fix: systemctl restart bcm-agent on affected nodes. Exam tip: Common after BCM upgrades; agents don't auto-restart. |
+| 7 | BCM command to update BMC firmware with IPMI verification? | cmsh device update bmc --version <ver> --verify-ipmi --skip-unreachable -c <category> Exam tip: --verify-ipmi checks connectivity before update; --skip-unreachable prevents failures. |
+| 8 | What does 'NIC firmware: NOT_SYNCED' status indicate? | NIC firmware version doesn't match BCM's expected cluster version. Can cause RoCE/InfiniBand issues. Fix: cmsh device update nic --sync --version <ver>. Exam tip: Must resolve for production clusters. |
+| 9 | BCM command to check cluster health status? | cmsh show health (summary) or cmsh show health -v (verbose with daemon status). Exam tip: CRITICAL status on bcm-agent means daemon down; DEGRADED means performance issue. |
+| 10 | Where are DHCP/PXE logs located for BCM provisioning troubleshooting? | /var/log/bcm/provisioning.log (BCM logs) and /var/log/messages (system DHCP/PXE). Exam tip: Check these first for 'image sync failed' errors to verify node network boot. |
+| 11 | What service manages InfiniBand subnet in BCM-deployed clusters? | opensm (OpenSM subnet manager). Configured via BCM network policies. Exam tip: Only ONE active SM per fabric; multiple SMs cause 'Polling' state errors. |
+| 12 | BCM command to execute shell command cluster-wide? | cmsh device execute -c <category> <command> Example: cmsh device execute -c compute_nodes 'systemctl restart bcm-agent' Exam tip: Used for service restarts, log collection, health checks across nodes. |

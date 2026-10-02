@@ -1,0 +1,16 @@
+## Chapter 7: Resource Allocation and NGC Container Management — Flashcards
+
+| # | Front (Question) | Back (Answer) |
+|---|-----------------|---------------|
+| 1 | Run:ai project: difference between guaranteed quota and over-quota limit | Guaranteed quota = resources ALWAYS available (reserved). Over-quota limit = MAX resources project can use when cluster has spare capacity. Exam tip: Guaranteed is minimum, over-quota is maximum burst. |
+| 2 | Command to create Kubernetes ResourceQuota limiting namespace to 8 GPUs total | kubectl create quota gpu-quota --hard=requests.nvidia.com/gpu=8 -n <namespace> Exam tip: Use 'requests' not 'limits' for quota - Kubernetes counts requested resources. |
+| 3 | NGC registry authentication: command to log in with API key | docker login nvcr.io Username: $oauthtoken Password: <NGC_API_KEY> Exam tip: Username is ALWAYS '$oauthtoken' (literal string), password is your API key. |
+| 4 | Slurm sacctmgr: command to set fair-share weights 60/40 for accounts A and B | sacctmgr modify account A set shares=60 sacctmgr modify account B set shares=40 Exam tip: Shares are relative weights (60:40 = 3:2 ratio). Must have PriorityType=priority/multifactor enabled. |
+| 5 | nvidia-smi: what does 0% GPU utilization + process listed mean? | Process is running but NOT executing GPU kernels. Causes: CUDA error preventing kernel launch, code running CPU path, wrong device ID, OOM. Exam tip: Check application stderr for CUDA errors. |
+| 6 | DCGM diagnostic levels: what does 'dcgmi diag -r 3' test? | Level 3 = comprehensive hardware validation (memory, compute, bandwidth, stress test). Takes 10-15 min. Exam tip: r1=quick, r2=medium, r3=long. Use r3 before deploying nodes to production. |
+| 7 | Kubernetes LimitRange vs ResourceQuota for GPU limits | LimitRange = default/max per pod/container. ResourceQuota = total for namespace. Exam tip: Use ResourceQuota for team caps, LimitRange to prevent single pod from requesting 100 GPUs. |
+| 8 | NGC container tag format: what does 'nvcr.io/nvidia/pytorch:24.01-py3' indicate? | 24.01 = release year/month (January 2024). py3 = Python 3. Exam tip: NEVER use ':latest' - exam penalizes non-reproducible configs. Always pin YY.MM version. |
+| 9 | Run:ai over-quota: what happens when project exceeds over-quota limit? | Jobs remain pending until resources free up OR other projects release over-quota resources. Jobs won't preempt guaranteed allocations. Exam tip: Over-quota uses fair-share, doesn't violate other projects' guarantees. |
+| 10 | Slurm PriorityType: what must be set to enable fair-share scheduling? | PriorityType=priority/multifactor in slurm.conf. Then set PriorityWeightFairshare (e.g., 10000) to control fair-share impact on priority. Exam tip: Multifactor combines age, fair-share, QOS, partition weights. |
+| 11 | nvidia-smi: command to check GPU power draw and temperature for GPU 2 | nvidia-smi -i 2 -q -d POWER,TEMPERATURE OR: nvidia-smi -i 2 (shows power/temp in default output) Exam tip: -q = query, -d = display specific sections. |
+| 12 | NGC catalog: where to find pre-trained NeMo LLM models? | NGC Catalog → Models → NeMo section. Look for .nemo checkpoint files (e.g., GPT models, Megatron-LLM checkpoints). Exam tip: Models vs Containers - models are weights, containers are runtime environments. |
